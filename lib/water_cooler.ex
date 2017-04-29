@@ -40,16 +40,4 @@ defmodule WaterCooler do
     message
   end
 
-  use Application
-
-  def start(_type, _args) do
-    import Supervisor.Spec, warn: false
-
-    children = [
-      Plug.Adapters.Cowboy.child_spec(:http, __MODULE__, [], port: 8080)
-    ]
-
-    opts = [strategy: :one_for_one, name: __MODULE__.Supervisor]
-    Supervisor.start_link(children, opts)
-  end
 end
