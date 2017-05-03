@@ -27,6 +27,10 @@ defmodule WaterCooler do
     |> listen()
   end
 
+  match _ do
+    send_resp(conn, 404, "oops")
+  end
+
   defp listen(conn) do
     receive do
       {:message, message} ->
