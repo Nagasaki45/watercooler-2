@@ -1,6 +1,7 @@
 defmodule WaterCoolerTest do
   use ExUnit.Case
   use Plug.Test
+  require Mock
   doctest WaterCooler
 
   alias WaterCooler.ChatRoom
@@ -23,11 +24,16 @@ defmodule WaterCoolerTest do
   end
 
   test "Update is streamed to client" do
-    # response = get("/updates")
-    # assert "chunked" == :proplists.get_value("transfer-encoding", response.headers)
-    # assert [chunk] = info(ChatRoom.post("Greetings!"))
-    # {event, _} = ServerSentEvent.parse(chunk)
-    # assert %{type: "chat", lines: ["Greetings!"]} = event
+    Task.async(fn -> get("/updates") end)
+
+    home = self()
+    chunk_mock = fn _conn, chunk -> send(home, chunk) end
+    Mock.with_mock(Plug.Conn, [:passthrough], chunk: chunk_mock) do
+
+      ChatRoom.publish("Greetings!")
+      assert_receive "event: chat\ndata: Greetings!\n\n", 10
+
+    end
   end
 
   def get(path) do

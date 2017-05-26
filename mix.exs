@@ -19,7 +19,8 @@ defmodule WaterCooler.Mixfile do
     [
       {:cowboy, "~> 1.1"},
       {:plug, "~> 1.3"},
-      {:gproc, "0.3.1"}
+      {:gproc, "0.3.1"},
+      {:mock, "~> 0.2.1", only: :test},
     ]
   end
 end
